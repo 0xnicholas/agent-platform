@@ -1,19 +1,15 @@
 /**
- * AgentDetailPage Agent 详情页面
- * 路由入口，根据路径显示不同模块
+ * AgentChatPage Agent 对话页面
+ * 包装 ChatPage，处理数据加载
  */
 
-import { useParams, Navigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
+import { useParams } from 'react-router-dom'
 import { PageContainer } from '../../layout/PageContainer'
-import { getAgent } from '@lib/supabase/agents'
-import type { Agent } from '@types/agent'
+import { getAgent } from '../../../lib/supabase/agents'
+import type { Agent } from '../../../types/agent'
 
-interface AgentDetailPageProps {
-  // 子页面组件将通过 children 传入
-}
-
-export function AgentDetailPage() {
+export function AgentChatPage() {
   const { id } = useParams<{ id: string }>()
   const [agent, setAgent] = useState<Agent | null>(null)
   const [loading, setLoading] = useState(true)
@@ -43,15 +39,21 @@ export function AgentDetailPage() {
     return (
       <PageContainer>
         <div className="text-center py-12">
-          <p className="text-gray-500 mb-4">Agent 不存在</p>
+          <p className="text-gray-500">Agent 不存在</p>
         </div>
       </PageContainer>
     )
   }
 
-  // AgentDetailPage 现在只是一个容器
-  // 实际的路由内容由 App.tsx 中的子路由处理
-  // 这里可以放置一些共享的状态或布局
-
-  return null
+  // 暂时返回简单的 chat 界面
+  // 后续可以扩展为完整的 ChatPage
+  return (
+    <div className="h-full flex flex-col">
+      <div className="flex-1 overflow-y-auto p-4">
+        <div className="text-center text-gray-500 py-8">
+          <p>与 {agent.name} 对话</p>
+        </div>
+      </div>
+    </div>
+  )
 }

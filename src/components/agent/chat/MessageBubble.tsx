@@ -2,7 +2,6 @@
  * MessageBubble 消息气泡组件
  */
 
-import { ReactNode } from 'react'
 import { Bot, User, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react'
 import { Avatar } from '../../ui/Avatar'
 import { Badge } from '../../ui/Badge'

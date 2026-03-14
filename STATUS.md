@@ -1,6 +1,6 @@
 # 项目状态
 
-> 更新时间: 2026-03-14 14:47 GMT+8
+> 更新时间: 2026-03-15 01:10 GMT+8
 > 按照 CLAUDE.md 规范检查
 
 ## 项目概述
@@ -14,23 +14,58 @@
 ## 2026-03-14 更新汇总
 
 ### UI 开发
-- ✅ 删除 Agent 详情页左侧导航菜单卡片
-- ✅ 登录后右上角显示用户名
-- ✅ Memory UI - 记忆管理界面
-- ✅ Integrations UI - Agent 集成配置界面
-- ✅ Connector 管理 - 全局连接器管理页面
-- ✅ Task 页面 - 与后端对接
-- ✅ Files 页面 - 知识库文件管理
+- ✅ Agent 详情页 Sidebar 导航重构
+- ✅ Agent Settings 页面
+- ✅ Profile/Identity 表单优化
+- ✅ 沉浸式 Chat 体验
+- ✅ 顶部显示 Agent 名称
+
+### Chat API 集成
+- ✅ 新增 `src/lib/supabase/chat.ts`
+- ✅ 调用 llm-chat Edge Function
+
+### Token 用量统计
+- ✅ `src/lib/supabase/token-usage.ts` - 用量追踪模块
+- ✅ `src/components/agent/TokenStats.tsx` - 用量统计组件
+- ✅ llm-chat/index.ts - 自动记录 token 用量
+
+### Task 调度
+- ✅ `supabase/supabase/functions/task-run/index.ts` - 已创建
+- ✅ `supabase/migrations/002_pg_cron_setup.sql` - 已创建
+
+### 动画/交互增强
+- ✅ Button loading 状态支持
+- ✅ Skeleton 骨架屏组件
+- ✅ 动画工具类 (fade-in, slide-up, shimmer)
+
+### 组件重构
+- ✅ AgentDetailPage 拆分为独立页面
 
 ### 测试框架
 - ✅ Vitest + React Testing Library 搭建完成
-- ✅ 单元测试覆盖 (63 个测试用例)
-- ✅ 测试文件:
-  - UI 组件: Button, Input, Modal, Card, Badge, Avatar, Loading, Tabs
-  - API: Memories, Connectors, Tasks, KnowledgeFiles
+- ✅ 63 个单元测试用例
 
 ### 阻塞项
-- 无
+- ⚠️ **Edge Functions 未部署** - 需配置 Supabase Secrets (KIMI_API_KEY 等)
+- ⚠️ **pg_cron migration 未执行** - 需在 Supabase SQL Editor 运行
+
+---
+
+## 待完善
+
+### 高优先级
+1. **部署 Edge Functions** - 需 Supabase CLI + API Keys
+2. **执行 pg_cron migration** - 需在 Supabase SQL Editor 运行
+
+### 中优先级
+1. ✅ Token 用量统计 - 已实现
+2. ✅ 错误处理/Toast 通知 - 已实现
+3. ✅ 组件代码重构 - AgentDetailPage 已拆分
+
+### 低优先级
+1. ✅ 动画/交互增强 - 已完成
+2. ✅ 移动端优化 - Responsive 组件库
+3. ✅ 性能优化 - Vite 优化、懒加载、Hooks
 
 ---
 
@@ -41,34 +76,26 @@
 | **LLM Gateway** | types.ts, kimi.ts, minimax.ts, gateway.ts | ✅ |
 | **前端基础** | Vite/TS/Tailwind | ✅ |
 | **布局组件** | Layout/Header/Sidebar | ✅ |
-| **UI 组件** | Button/Input/Card/Modal... | ✅ |
+| **UI 组件** | Button/Input/Card/Modal/Skeleton/Responsive... | ✅ |
+| **性能优化** | vite.config.ts, usePerformance.ts, lazy.ts | ✅ |
 | **页面** | Agent/Tasks/Files/Settings/Marketplace | ✅ |
 | **Connectors** | 飞书/Slack/GitHub | ✅ |
 | **编排引擎** | orchestration/engine.ts | ✅ |
 | **Prompt 构建** | buildSystemPrompt.ts | ✅ |
-| **状态管理** | chatStore, agentStore | ✅ |
+| **状态管理** | chatStore, agentStore, toastStore | ✅ |
 | **Hooks** | useAgent | ✅ |
-| **后端 Functions** | llm-chat, tool-call, agents, rag-ingest, rag-retrieve | ✅ |
+| **后端 Functions** | llm-chat, tool-call, rag-ingest, rag-retrieve | ✅ |
+| **task-run Function** | task-run/index.ts | ✅ 已创建，待部署 |
+| **Token 用量追踪** | token-usage.ts, TokenStats.tsx | ✅ |
+| **Toast 通知系统** | toastStore.ts, Toast.tsx | ✅ |
+| **Skeleton 组件** | Skeleton.tsx | ✅ |
+| **Task 调度 Migration** | 002_pg_cron_setup.sql | ✅ 已创建 |
 | **数据库 Schema** | 11 张表 + RLS + pgvector | ✅ |
 | **日志系统** | logger.ts + DebugPanel | ✅ |
 | **登录认证** | AuthPage + Session 管理 | ✅ |
 | **Memory UI** | memories.ts, MemoryPage.tsx | ✅ |
 | **Integrations UI** | connectors.ts, IntegrationsPage.tsx | ✅ |
 | **测试框架** | Vitest + RTL, 63 测试用例 | ✅ |
-
----
-
-## 待完善
-
-### 高优先级
-1. Task 调度实现 - 需要 pg_cron 或外部调度
-2. 执行摘要生成 - Task Run 的结构化摘要
-3. Task 历史 UI - 执行记录查看
-
-### 中优先级
-1. Token 用量统计 - 实际记录到数据库
-2. Teams 页面 - 数据库暂无 teams 表
-3. 组件代码审查 - 避免多职责
 
 ---
 
@@ -90,4 +117,36 @@
 | API Key 暴露前端 | ✅ 未违反 |
 | 跳过 LLM Gateway | ✅ 未违反 |
 | 无 RLS 暴露表 | ✅ 已配置 |
-| 组件承担多职责 | ⚠️ 需审查 |
+| 组件承担多职责 | ✅ AgentDetailPage 已拆分 |
+
+---
+
+## 项目规模
+
+| 指标 | 数值 |
+|------|------|
+| .tsx 文件 | 50 |
+| .ts 文件 | 42 |
+| 代码总量 | 660KB |
+| 生产依赖 | 13 |
+
+---
+
+## 部署清单
+
+### 1. 配置 Supabase Secrets
+在 Supabase Dashboard → Settings → Edge Functions → Secrets 添加：
+```
+KIMI_API_KEY=你的_kimi_api_key
+MINIMAX_API_KEY=你的_minimax_api_key
+```
+
+### 2. 部署 Edge Functions
+```bash
+supabase functions deploy llm-chat
+supabase functions deploy task-run
+# 其他 functions...
+```
+
+### 3. 执行 Database Migration
+在 Supabase SQL Editor 运行 `supabase/migrations/002_pg_cron_setup.sql`

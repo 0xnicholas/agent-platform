@@ -1,22 +1,26 @@
 import { ButtonHTMLAttributes, forwardRef } from 'react'
 import { clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
+import { Loader2 } from 'lucide-react'
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger'
   size?: 'sm' | 'md' | 'lg'
+  loading?: boolean
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant = 'primary', size = 'md', ...props }, ref) => {
+  ({ className, variant = 'primary', size = 'md', loading, disabled, children, ...props }, ref) => {
     return (
       <button
         ref={ref}
+        disabled={disabled || loading}
         className={twMerge(
           clsx(
-            'inline-flex items-center justify-center rounded-lg font-medium transition-colors',
+            'inline-flex items-center justify-center rounded-lg font-medium transition-all',
             'focus:outline-none focus:ring-2 focus:ring-offset-2',
             'disabled:opacity-50 disabled:cursor-not-allowed',
+            'active:scale-[0.98]',
             {
               'bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500':
                 variant === 'primary',
@@ -35,7 +39,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           )
         )}
         {...props}
-      />
+      >
+        {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+        {children}
+      </button>
     )
   }
 )

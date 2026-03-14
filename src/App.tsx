@@ -7,23 +7,21 @@ import { Layout } from './components/layout'
 import { HomeLayout } from './components/layout/HomeLayout'
 import { HomePage } from './components/home/HomePage'
 import { AgentListPage } from './components/agent/list'
-import { AgentDetailPage } from './components/agent/detail/AgentDetailPage'
 import { AgentCreatePage } from './components/agent/detail/AgentCreatePage'
+import { AgentChatPage } from './components/agent/detail/AgentChatPage'
 import { MemoryPage } from './components/agent/memory/MemoryPage'
 import { IntegrationsPage } from './components/agent/integrations/IntegrationsPage'
 import { AgentSettingsPage } from './components/agent/settings/AgentSettingsPage'
 import { ChatListPage } from './components/chat/ChatListPage'
-import { ChatPage } from './components/agent/chat/ChatPage'
 import { TasksPage } from './components/tasks/TasksPage'
 import { FilesPage } from './components/files/FilesPage'
-import { TeamsPage } from './components/teams/TeamsPage'
 import { ProfilePage } from './components/settings/ProfilePage'
 import { SettingsPage } from './components/settings/SettingsPage'
 import { MarketplacePage } from './components/marketplace/MarketplacePage'
 import { ConnectorManagePage } from './components/connector/ConnectorManagePage'
 import { AuthPage } from './components/auth/AuthPage'
 import { DebugPanel } from './components/debug/DebugPanel'
-import { useChatStore } from './stores/chatStore'
+import { ToastContainer } from './components/ui/Toast'
 import { useEffect, useState } from 'react'
 import { supabase } from './lib/supabase/client'
 import { getAgent } from './lib/supabase/agents'
@@ -101,11 +99,11 @@ function AppRoutes() {
 
       {/* Agent 详情页 Layout */}
       <Route element={<AgentLayout />}>
-        <Route path="/agents/:id" element={<AgentDetailPage />} />
-        <Route path="/agents/:id/chat" element={<AgentDetailPage />} />
+        <Route path="/agents/:id" element={<Navigate to="chat" replace />} />
+        <Route path="/agents/:id/chat" element={<AgentChatPage />} />
         <Route path="/agents/:id/memory" element={<MemoryPage />} />
         <Route path="/agents/:id/integrations" element={<IntegrationsPage />} />
-        <Route path="/agents/:id/profile" element={<AgentDetailPage />} />
+        <Route path="/agents/:id/profile" element={<AgentSettingsPage />} />
         <Route path="/agents/:id/knowledge" element={<FilesPage />} />
         <Route path="/agents/:id/tasks" element={<TasksPage />} />
         <Route path="/agents/:id/settings" element={<AgentSettingsPage />} />
@@ -120,6 +118,7 @@ function App() {
       <AuthGuard>
         <AppRoutes />
       </AuthGuard>
+      <ToastContainer />
       <DebugPanel />
     </BrowserRouter>
   )

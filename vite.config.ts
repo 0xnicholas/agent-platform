@@ -21,4 +21,37 @@ export default defineConfig({
     port: 5173,
     host: '0.0.0.0',
   },
+  build: {
+    // 性能优化配置
+    target: 'esnext',
+    minify: 'esbuild',
+    sourcemap: false,
+    rollupOptions: {
+      output: {
+        // 代码分割优化
+        manualChunks: {
+          // React 生态
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          // UI 组件库
+          'ui-vendor': ['lucide-react', 'clsx', 'tailwind-merge'],
+          // Supabase
+          'supabase-vendor': ['@supabase/supabase-js'],
+        },
+      },
+    },
+    // 启用 CSS 代码分割
+    cssCodeSplit: true,
+    // 块大小警告阈值
+    chunkSizeWarningLimit: 500,
+  },
+  // 依赖优化
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'react-router-dom', '@supabase/supabase-js', 'zustand'],
+    exclude: [],
+  },
+  // 预构建配置
+  esbuild: {
+    // 移除控制台日志
+    drop: process.env.NODE_ENV === 'production' ? ['console', 'debugger'] : [],
+  },
 })

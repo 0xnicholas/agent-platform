@@ -14,18 +14,29 @@ import { EmptyAgentState } from './EmptyAgentState'
 import type { Agent } from '@types/agent'
 
 interface AgentListPageProps {
-  agents: Agent[]
+  agents?: Agent[]
   isLoading?: boolean
   onDelete?: (id: string) => void
   onDuplicate?: (id: string) => void
 }
 
 export function AgentListPage({ 
-  agents, 
-  isLoading, 
+  agents: propAgents, 
+  isLoading: propLoading, 
   onDelete, 
   onDuplicate 
 }: AgentListPageProps) {
+  // 如果没有传入 agents，则内部获取
+  const [agents, setAgents] = useState<Agent[]>(propAgents || [])
+  const [isLoading, setIsLoading] = useState(propLoading ?? true)
+  
+  // TODO: 内部获取 agents 列表
+  // useEffect(() => {
+  //   if (propAgents === undefined) {
+  //     getAgents().then(setAgents).finally(() => setIsLoading(false))
+  //   }
+  // }, [])
+  
   const [searchQuery, setSearchQuery] = useState('')
 
   // 过滤搜索

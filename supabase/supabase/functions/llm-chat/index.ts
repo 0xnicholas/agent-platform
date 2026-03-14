@@ -197,6 +197,19 @@ Deno.serve(async (req) => {
       messages: [...messages, { role: 'assistant', content: response.content }],
     })
 
+    // 记录 token 用量
+    if (response.usage) {
+      await supabase.from('token_usage').insert({
+        agent_id: agentId,
+        user_id: user.id,
+        model: agent.model_config?.model || 'kimi-turbo',
+        input_tokens: response.usage.prompt_tokens,
+        output_tokens: response.usage.completion_tokens,
+        total_tokens: response.usage.total_tokens,
+        source_type: 'chat',
+      })
+    }
+
     return new Response(JSON.stringify(response), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     })

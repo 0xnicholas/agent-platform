@@ -2,7 +2,7 @@
  * ChatPage 对话页面
  */
 
-import { useState, useCallback } from 'react'
+import { useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowLeft, Settings, Share2, MoreHorizontal } from 'lucide-react'
 import { ChatContainer } from './ChatContainer'
@@ -10,7 +10,7 @@ import { MessageList } from './MessageList'
 import { ChatInput } from './ChatInput'
 import { Avatar } from '../../ui/Avatar'
 import { Button } from '../../ui/Button'
-import type { Agent } from '@types/agent'
+import type { Agent } from '../../../types/agent'
 
 interface Message {
   id: string
