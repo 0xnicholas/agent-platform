@@ -1,0 +1,258 @@
+/**
+ * MiniMax Provider 实现
+ * MiniMax LLM API
+ */
+
+import type { Message, ModelConfig, LLMResponse, ToolDefinition } from './types'
+
+interface MiniMaxRequestBody {
+  model: string
+  messages: Array<{
+    role: 'system' | 'user' | 'assistant'
+    content: string
+  }>
+  temperature?: number
+  max_tokens?: number
+  stream?: boolean
+  tools?: Array<{
+    type: 'function'
+    function: {
+      name: string
+      description: string
+      parameters: Record<string, unknown>
+    }
+  }>
+}
+
+interface MiniMaxResponse {
+  id: string
+  choices: Array<{
+    message: {
+      role: string
+      content: string
+    }
+    finish_reason: string
+  }>
+  usage: {
+    prompt_tokens: number
+    completion_tokens: number
+    total_tokens: number
+  }
+}
+
+const BASE_URL = 'https://api.minimax.chat/v1'
+
+/**
+ * 获取 API 域名
+ * MiniMax 需要根据模型选择不同的 API 域名
+ */
+function getApiDomain(model: string): string {
+  // abab6.5s / abab6.5g / abab6.5 使用 v2 text 接口
+  if (model.includes('abab6.5')) {
+    return 'https://api.minimax.chat/v2'
+  }
+  return BASE_URL
+}
+
+/**
+ * 调用 MiniMax API
+ */
+export async function callMiniMax(
+  systemPrompt: string,
+  messages: Message[],
+  tools: ToolDefinition[] | undefined,
+  modelConfig: ModelConfig,
+  apiKey: string
+): Promise<LLMResponse> {
+  const domain = getApiDomain(modelConfig.model)
+  
+  // 适配模型名
+  let modelName = modelConfig.model
+  if (modelName === 'minimax-abab6.5s') modelName = 'abab6.5s-chat'
+  if (modelName === 'minimax-abab6.5g') modelName = 'abab6.5g-chat'
+  if (modelName === 'minimax-abab6.5') modelName = 'abab6.5-chat'
+
+  const url = `${domain}/text/chatcompletion_v2`
+
+  const body: MiniMaxRequestBody = {
+    model: modelName,
+    messages: [
+      { role: 'system', content: systemPrompt },
+      ...messages.map((m) => ({
+        role: m.role as 'system' | 'user' | 'assistant',
+        content: m.content,
+      })),
+    ],
+    temperature: modelConfig.temperature ?? 0.7,
+    max_tokens: modelConfig.maxTokens ?? 4096,
+  }
+
+  if (tools && tools.length > 0) {
+    body.tools = tools.map((tool) => ({
+      type: 'function' as const,
+      function: {
+        name: tool.name,
+        description: tool.description,
+        parameters: tool.inputSchema,
+      },
+    }))
+  }
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify(body),
+  })
+
+  if (!response.ok) {
+    const error = await response.text()
+    throw new Error(`MiniMax API error: ${response.status} - ${error}`)
+  }
+
+  const data: MiniMaxResponse = await response.json()
+  const choice = data.choices[0]
+
+  return {
+    content: choice.message.content || '',
+    toolCalls: undefined,
+    stopReason: mapFinishReason(choice.finish_reason),
+    usage: {
+      inputTokens: data.usage.prompt_tokens,
+      outputTokens: data.usage.completion_tokens,
+    },
+    model: modelConfig.model,
+  }
+}
+
+/**
+ * 流式调用 MiniMax API
+ */
+export async function* streamMiniMax(
+  systemPrompt: string,
+  messages: Message[],
+  tools: ToolDefinition[] | undefined,
+  modelConfig: ModelConfig,
+  apiKey: string
+): AsyncGenerator<{ type: 'text'; text: string } | { type: 'done'; usage: { inputTokens: number; outputTokens: number } } | { type: 'error'; message: string }> {
+  const domain = getApiDomain(modelConfig.model)
+  
+  let modelName = modelConfig.model
+  if (modelName === 'minimax-abab6.5s') modelName = 'abab6.5s-chat'
+  if (modelName === 'minimax-abab6.5g') modelName = 'abab6.5g-chat'
+  if (modelName === 'minimax-abab6.5') modelName = 'abab6.5-chat'
+
+  const url = `${domain}/text/chatcompletion_v2`
+
+  const body: MiniMaxRequestBody = {
+    model: modelName,
+    messages: [
+      { role: 'system', content: systemPrompt },
+      ...messages.map((m) => ({
+        role: m.role as 'system' | 'user' | 'assistant',
+        content: m.content,
+      })),
+    ],
+    temperature: modelConfig.temperature ?? 0.7,
+    max_tokens: modelConfig.maxTokens ?? 4096,
+    stream: true,
+  }
+
+  if (tools && tools.length > 0) {
+    body.tools = tools.map((tool) => ({
+      type: 'function' as const,
+      function: {
+        name: tool.name,
+        description: tool.description,
+        parameters: tool.inputSchema,
+      },
+    }))
+  }
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify(body),
+  })
+
+  if (!response.ok) {
+    const error = await response.text()
+    yield { type: 'error', message: `MiniMax API error: ${response.status} - ${error}` }
+    return
+  }
+
+  if (!response.body) {
+    yield { type: 'error', message: 'No response body' }
+    return
+  }
+
+  const reader = response.body.getReader()
+  const decoder = new TextDecoder()
+  let buffer = ''
+  let inputTokens = 0
+  let outputTokens = 0
+
+  try {
+    while (true) {
+      const { done, value } = await reader.read()
+      if (done) break
+
+      buffer += decoder.decode(value, { stream: true })
+      const lines = buffer.split('\n')
+      buffer = lines.pop() || ''
+
+      for (const line of lines) {
+        const trimmed = line.trim()
+        if (!trimmed || !trimmed.startsWith('data: ')) continue
+
+        const data = trimmed.slice(6)
+        if (data === '[DONE]') {
+          yield { type: 'done', usage: { inputTokens, outputTokens } }
+          return
+        }
+
+        try {
+          const parsed = JSON.parse(data)
+          const delta = parsed.choices?.[0]?.delta
+
+          if (delta?.content) {
+            yield { type: 'text', text: delta.content }
+            outputTokens += countTokens(delta.content)
+          }
+
+          if (parsed.usage) {
+            inputTokens = parsed.usage.prompt_tokens || 0
+          }
+        } catch {
+          // 跳过无效 JSON
+        }
+      }
+    }
+  } finally {
+    reader.releaseLock()
+  }
+}
+
+function mapFinishReason(reason: string): LLMResponse['stopReason'] {
+  switch (reason) {
+    case 'stop':
+      return 'end_turn'
+    case 'length':
+      return 'max_tokens'
+    case 'tool_calls':
+      return 'tool_use'
+    default:
+      return 'end_turn'
+  }
+}
+
+function countTokens(text: string): number {
+  const chinese = text.match(/[\u4e00-\u9fa5]/g)?.length || 0
+  const english = text.length - chinese
+  return Math.ceil(chinese * 2 + english * 1.5)
+}
