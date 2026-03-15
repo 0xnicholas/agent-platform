@@ -5,7 +5,6 @@
 
 import { useState } from 'react'
 import { ReactNode } from 'react'
-import { useLocation } from 'react-router-dom'
 import { Header } from './Header'
 import { Sidebar } from './Sidebar'
 
@@ -17,7 +16,6 @@ interface LayoutProps {
 
 export function Layout({ children, agentId, agentName }: LayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  const location = useLocation()
   
   // 只在 Agent 页面显示 sidebar
   const showSidebar = Boolean(agentId)

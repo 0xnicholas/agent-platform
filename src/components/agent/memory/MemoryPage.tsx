@@ -4,16 +4,14 @@
 
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
-import { Plus, Trash2, Edit2, Save, X, Brain, Clock } from 'lucide-react'
+import { Plus, Trash2, Edit2, Save, Brain, Clock } from 'lucide-react'
 import { PageContainer } from '../../layout/PageContainer'
 import { Button } from '../../ui/Button'
 import { Card, CardContent, CardHeader } from '../../ui/Card'
-import { Input } from '../../ui/Input'
-import { Badge } from '../../ui/Badge'
 import { Modal } from '../../ui/Modal'
 import { getMemories, createMemory, updateMemory, deleteMemory, type Memory } from '@lib/supabase/memories'
 import { getAgent } from '@lib/supabase/agents'
-import type { Agent } from '@types/agent'
+import type { Agent } from '@/types/agent'
 
 const memoryTypes = [
   { value: 'fact', label: '事实', color: 'blue' },

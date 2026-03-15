@@ -4,8 +4,7 @@
  */
 
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
-import { Plus, Trash2, Edit2, Save, X, Plug, Zap, CheckCircle, XCircle, Settings, ExternalLink, Key } from 'lucide-react'
+import { Plus, Trash2, Save, Plug, Zap, XCircle, Settings, ExternalLink, Key } from 'lucide-react'
 import { PageContainer } from '@components/layout/PageContainer'
 import { Button } from '@components/ui/Button'
 import { Card, CardContent, CardHeader } from '@components/ui/Card'

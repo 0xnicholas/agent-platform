@@ -5,7 +5,7 @@
 
 import { useState, useEffect } from 'react'
 import { logger, LogEntry } from '@lib/logger'
-import { X, Trash2, Download, ChevronDown, ChevronUp } from 'lucide-react'
+import { X, Trash2, Download } from 'lucide-react'
 
 export function DebugPanel() {
   const [isOpen, setIsOpen] = useState(false)

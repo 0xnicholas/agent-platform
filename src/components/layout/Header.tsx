@@ -4,7 +4,7 @@
 
 import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { Settings, LogOut, User, Loader2, Menu, X } from 'lucide-react'
+import { LogOut, User, Loader2, Menu, X } from 'lucide-react'
 import { supabase } from '@lib/supabase/client'
 import { logger } from '@lib/logger'
 

@@ -10,7 +10,7 @@ import { Button } from '../../ui/Button'
 import { Card, CardHeader, CardContent } from '../../ui/Card'
 import { Badge } from '../../ui/Badge'
 import { getAgent, updateAgent, deleteAgent } from '@lib/supabase/agents'
-import type { Agent } from '@types/agent'
+import type { Agent } from '@/types/agent'
 
 export function AgentSettingsPage() {
   const { id } = useParams<{ id: string }>()

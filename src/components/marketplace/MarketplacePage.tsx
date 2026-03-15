@@ -3,7 +3,7 @@
  */
 
 import { useState } from 'react'
-import { Search, Filter, Star, Download, ExternalLink } from 'lucide-react'
+import { Search, Star, Download } from 'lucide-react'
 import { PageContainer } from '@components/layout/PageContainer'
 import { Card, CardContent } from '@components/ui/Card'
 import { Button } from '@components/ui/Button'

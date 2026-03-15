@@ -25,7 +25,7 @@ import { Avatar } from '@components/ui/Avatar'
 import { Badge } from '@components/ui/Badge'
 import { getAgents, createAgent } from '@lib/supabase/agents'
 import { logger } from '@lib/logger'
-import type { Agent } from '@types/agent'
+import type { Agent } from '@/types/agent'
 
 export function HomePage() {
   const navigate = useNavigate()

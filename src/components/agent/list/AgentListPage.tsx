@@ -11,7 +11,7 @@ import { Input } from '../../ui/Input'
 import { AgentCard } from './AgentCard'
 import { AgentListSkeleton } from './AgentCardSkeleton'
 import { EmptyAgentState } from './EmptyAgentState'
-import type { Agent } from '@types/agent'
+import type { Agent } from '@/types/agent'
 
 interface AgentListPageProps {
   agents?: Agent[]
@@ -27,8 +27,8 @@ export function AgentListPage({
   onDuplicate 
 }: AgentListPageProps) {
   // 如果没有传入 agents，则内部获取
-  const [agents, setAgents] = useState<Agent[]>(propAgents || [])
-  const [isLoading, setIsLoading] = useState(propLoading ?? true)
+  const [agents] = useState<Agent[]>(propAgents || [])
+  const [isLoading] = useState(propLoading ?? true)
   
   // TODO: 内部获取 agents 列表
   // useEffect(() => {

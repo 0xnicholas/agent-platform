@@ -4,7 +4,7 @@
 
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
-import { Plus, Trash2, Edit2, Save, X, Plug, Zap, CheckCircle, XCircle, Settings } from 'lucide-react'
+import { Plus, Trash2, Save, Plug, Zap, CheckCircle, XCircle, Settings } from 'lucide-react'
 import { PageContainer } from '../../layout/PageContainer'
 import { Button } from '../../ui/Button'
 import { Card, CardContent, CardHeader } from '../../ui/Card'
@@ -21,7 +21,7 @@ import {
   type Connector 
 } from '@lib/supabase/connectors'
 import { getAgent } from '@lib/supabase/agents'
-import type { Agent } from '@types/agent'
+import type { Agent } from '../../types/agent'
 
 export function IntegrationsPage() {
   const { id: agentId } = useParams<{ id: string }>()

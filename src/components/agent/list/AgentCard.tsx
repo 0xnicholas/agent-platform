@@ -7,7 +7,7 @@ import { MoreHorizontal, MessageSquare, Play, Settings, Copy, Trash2 } from 'luc
 import { Card } from '../../ui/Card'
 import { Avatar } from '../../ui/Avatar'
 import { Badge } from '../../ui/Badge'
-import type { Agent } from '@types/agent'
+import type { Agent } from '@/types/agent'
 
 interface AgentCardProps {
   agent: Agent

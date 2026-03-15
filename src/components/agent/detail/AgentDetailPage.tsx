@@ -3,15 +3,11 @@
  * 路由入口，根据路径显示不同模块
  */
 
-import { useParams, Navigate } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { PageContainer } from '../../layout/PageContainer'
 import { getAgent } from '@lib/supabase/agents'
-import type { Agent } from '@types/agent'
-
-interface AgentDetailPageProps {
-  // 子页面组件将通过 children 传入
-}
+import type { Agent } from '../../types/agent'
 
 export function AgentDetailPage() {
   const { id } = useParams<{ id: string }>()

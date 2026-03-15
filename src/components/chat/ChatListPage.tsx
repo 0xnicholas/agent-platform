@@ -3,14 +3,13 @@
  * 显示所有 Agent 的对话记录
  */
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { PageContainer } from '@components/layout/PageContainer'
 import { Card, CardContent } from '@components/ui/Card'
 import { Button } from '@components/ui/Button'
 import { Avatar } from '@components/ui/Avatar'
 import { MessageSquare, Plus, Bot } from 'lucide-react'
-import { logger } from '@lib/logger'
 
 interface Conversation {
   id: string
@@ -24,7 +23,7 @@ interface Conversation {
 const mockConversations: Conversation[] = []
 
 export function ChatListPage() {
-  const [conversations, setConversations] = useState<Conversation[]>(mockConversations)
+  const [conversations] = useState<Conversation[]>(mockConversations)
 
   return (
     <PageContainer title="Chat" description="与你的 Agents 对话">
