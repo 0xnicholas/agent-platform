@@ -32,6 +32,7 @@ interface ConnectorTypeInfo {
   description: string
   color: string
   authUrl?: string
+  capabilities: string[]  // 提供的能力
   fields: { key: string; label: string; type: string }[]
 }
 
@@ -43,6 +44,7 @@ const connectorTypes: ConnectorTypeInfo[] = [
     description: '飞书消息、卡片、Bot',
     color: 'bg-blue-500',
     authUrl: 'https://open.feishu.cn/open-apis/authen/v1/authorize',
+    capabilities: ['messaging', 'docs', 'cards'],
     fields: [
       { key: 'app_id', label: 'App ID', type: 'text' },
       { key: 'app_secret', label: 'App Secret', type: 'password' },
@@ -55,6 +57,7 @@ const connectorTypes: ConnectorTypeInfo[] = [
     description: 'Slack 消息、频道管理',
     color: 'bg-purple-500',
     authUrl: 'https://slack.com/oauth/v2/authorize',
+    capabilities: ['messaging', 'channels'],
     fields: [
       { key: 'client_id', label: 'Client ID', type: 'text' },
       { key: 'client_secret', label: 'Client Secret', type: 'password' },
@@ -68,6 +71,7 @@ const connectorTypes: ConnectorTypeInfo[] = [
     description: 'GitHub 仓库、Issue、PR',
     color: 'bg-gray-800',
     authUrl: 'https://github.com/login/oauth/authorize',
+    capabilities: ['code', 'issues', 'prs'],
     fields: [
       { key: 'client_id', label: 'Client ID', type: 'text' },
       { key: 'client_secret', label: 'Client Secret', type: 'password' },
@@ -80,6 +84,7 @@ const connectorTypes: ConnectorTypeInfo[] = [
     description: 'Gmail 邮件发送和读取',
     color: 'bg-red-500',
     authUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
+    capabilities: ['email'],
     fields: [
       { key: 'client_id', label: 'Client ID', type: 'text' },
       { key: 'client_secret', label: 'Client Secret', type: 'password' },

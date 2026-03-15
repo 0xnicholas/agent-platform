@@ -5,7 +5,7 @@
 
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
-import { Plus, Trash2, Zap, Check, X, Loader2, Sparkles } from 'lucide-react'
+import { Plus, Trash2, Zap, Check, X, Loader2, Sparkles, AlertTriangle, Plug } from 'lucide-react'
 import { PageContainer } from '@components/layout/PageContainer'
 import { Card, CardContent, CardHeader } from '@components/ui/Card'
 import { Button } from '@components/ui/Button'
@@ -14,6 +14,19 @@ import { Input } from '@components/ui/Input'
 import { Modal } from '@components/ui/Modal'
 import { toast } from '@stores/toastStore'
 import { getAgent, updateAgent } from '@lib/supabase/agents'
+import { getConnectors } from '@lib/supabase/connectors'
+
+// 能力标签
+const CAPABILITY_LABELS: Record<string, string> = {
+  messaging: '💬 消息',
+  docs: '📄 文档',
+  cards: '🎴 卡片',
+  channels: '📢 频道',
+  code: '💻 代码',
+  issues: '🐛 Issues',
+  prs: '🔀 PRs',
+  email: '📧 邮件',
+}
 
 // 预定义技能模板
 const SKILL_TEMPLATES = [
@@ -29,7 +42,7 @@ const SKILL_TEMPLATES = [
 4. 提供改进建议
 
 请对提供的代码进行详细审查，并给出具体的改进建议。`,
-    connectors: ['github'],
+    capabilities: ['code'],  // 需要 GitHub
   },
   {
     id: 'copywriter',
@@ -43,7 +56,7 @@ const SKILL_TEMPLATES = [
 4. 广告文案
 
 根据用户需求，创建吸引人的文案内容。`,
-    connectors: [],
+    capabilities: [],
   },
   {
     id: 'customer-service',
@@ -57,7 +70,7 @@ const SKILL_TEMPLATES = [
 4. 保持积极友好的态度
 
 请根据客户的问题提供帮助。`,
-    connectors: [],
+    capabilities: ['messaging'],  // 需要消息能力
   },
   {
     id: 'data-analyst',
@@ -71,7 +84,7 @@ const SKILL_TEMPLATES = [
 4. 创建数据可视化
 
 请对提供的数据进行分析并给出建议。`,
-    connectors: [],
+    capabilities: [],  // 纯分析，不需要外部能力
   },
 ]
 
@@ -81,6 +94,7 @@ interface Skill {
   description: string
   category: string
   prompt: string
+  capabilities: string[]  // 需要的能力
   enabled: boolean
 }
 
@@ -99,11 +113,23 @@ export function SkillsPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
+  const [connectors, setConnectors] = useState<any[]>([])
+  
+  // 可用能力映射
+  const availableCapabilities = new Set<string>()
+  connectors.forEach(c => {
+    const type = c.type
+    if (type === 'github') availableCapabilities.add('code')
+    if (type === 'feishu') { availableCapabilities.add('messaging'); availableCapabilities.add('docs') }
+    if (type === 'slack') availableCapabilities.add('messaging')
+    if (type === 'gmail') availableCapabilities.add('email')
+  })
 
   const [newSkill, setNewSkill] = useState({
     name: '',
     description: '',
     category: 'custom',
+    capabilities: [] as string[],
     prompt: '',
   })
 
@@ -115,8 +141,12 @@ export function SkillsPage() {
 
   const loadAgent = async () => {
     try {
-      const data = await getAgent(agentId!)
+      const [data, connectorsData] = await Promise.all([
+        getAgent(agentId!),
+        getConnectors(agentId!),  // 加载 Agent 的 connectors
+      ])
       setAgent(data)
+      setConnectors(connectorsData || [])
       // 从 agent 配置中加载 skills
       const agentSkills = data.profile?.skills || []
       setSkills(agentSkills)
@@ -236,7 +266,12 @@ export function SkillsPage() {
         </Card>
       ) : (
         <div className="space-y-4">
-          {skills.map((skill) => (
+          {skills.map((skill) => {
+            // 检查能力是否满足
+            const missingCapabilities = (skill.capabilities || [])
+              .filter(cap => !availableCapabilities.has(cap))
+            
+            return (
             <Card key={skill.id} className={skill.enabled ? '' : 'opacity-60'}>
               <CardContent className="py-4">
                 <div className="flex items-start justify-between">
@@ -257,8 +292,42 @@ export function SkillsPage() {
                         <Badge variant="outline">
                           {CATEGORIES.find(c => c.value === skill.category)?.label || skill.category}
                         </Badge>
+                        {skill.enabled && missingCapabilities.length > 0 && (
+                          <Badge variant="warning">
+                            <AlertTriangle className="w-3 h-3 mr-1" />
+                            需配置
+                          </Badge>
+                        )}
                       </div>
                       <p className="text-sm text-gray-500 mt-1">{skill.description}</p>
+                      
+                      {/* 能力需求 */}
+                      {skill.capabilities && skill.capabilities.length > 0 && (
+                        <div className="mt-2 flex flex-wrap gap-1">
+                          {skill.capabilities.map(cap => (
+                            <Badge 
+                              key={cap} 
+                              variant={availableCapabilities.has(cap) ? 'success' : 'warning'}
+                            >
+                              {availableCapabilities.has(cap) ? '✓' : '✗'} {CAPABILITY_LABELS[cap] || cap}
+                            </Badge>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* 缺失能力提示 */}
+                      {skill.enabled && missingCapabilities.length > 0 && (
+                        <div className="mt-2 p-2 bg-yellow-50 rounded text-sm text-yellow-700 flex items-start gap-2">
+                          <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
+                          <span>
+                            需要配置: {missingCapabilities.map(c => CAPABILITY_LABELS[c] || c).join(', ')}
+                            <a href={`/agents/${agentId}/integrations`} className="underline ml-1">
+                              去配置 →
+                            </a>
+                          </span>
+                        </div>
+                      )}
+
                       <details className="mt-2">
                         <summary className="text-sm text-gray-400 cursor-pointer">
                           查看 Prompt
@@ -279,7 +348,8 @@ export function SkillsPage() {
                 </div>
               </CardContent>
             </Card>
-          ))}
+            )}
+          )}
         </div>
       )}
 
