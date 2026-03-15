@@ -16,7 +16,8 @@ import {
   MemoryStick,
   Plug,
   X,
-  Home
+  Home,
+  Sparkles
 } from 'lucide-react'
 import { useState } from 'react'
 import { useLocation } from 'react-router-dom'
@@ -38,6 +39,7 @@ export function Sidebar({ agentId, agentName, onClose }: SidebarProps) {
   // Agent 详情页的 Profile 子导航
   const profileSubItems = [
     { to: `/agents/${currentAgentId}/profile`, icon: User, label: 'Identity' },
+    { to: `/agents/${currentAgentId}/skills`, icon: Sparkles, label: 'Skills' },
     { to: `/agents/${currentAgentId}/knowledge`, icon: BookOpen, label: 'Knowledge' },
     { to: `/agents/${currentAgentId}/memory`, icon: MemoryStick, label: 'Memory' },
     { to: `/agents/${currentAgentId}/integrations`, icon: Plug, label: 'Integrations' },

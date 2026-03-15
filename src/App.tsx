@@ -16,6 +16,7 @@ import { ChatListPage } from './components/chat/ChatListPage'
 import { TasksPage } from './components/tasks/TasksPage'
 import { FilesPage } from './components/files/FilesPage'
 import { ProfilePage } from './components/settings/ProfilePage'
+import { SkillsPage } from './components/agent/skills/SkillsPage'
 import { SettingsPage } from './components/settings/SettingsPage'
 import { MarketplacePage } from './components/marketplace/MarketplacePage'
 import { PricingPage } from './components/settings/PricingPage'
@@ -106,6 +107,7 @@ function AppRoutes() {
         <Route path="/agents/:id/memory" element={<MemoryPage />} />
         <Route path="/agents/:id/integrations" element={<IntegrationsPage />} />
         <Route path="/agents/:id/profile" element={<ProfilePage />} />
+        <Route path="/agents/:id/skills" element={<SkillsPage />} />
         <Route path="/agents/:id/knowledge" element={<FilesPage />} />
         <Route path="/agents/:id/tasks" element={<TasksPage />} />
         <Route path="/agents/:id/settings" element={<AgentSettingsPage />} />
