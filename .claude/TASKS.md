@@ -2,7 +2,7 @@
 
 ## 当前阶段
 
-**Phase 2：Connector 体系**（进行中）
+**Phase 5：发布与市场**（进行中）
 
 ---
 
@@ -37,7 +37,7 @@
 - [x] Connector 抽象接口设计
 - [x] Gmail Connector 接入
 - [x] Slack OAuth 接入
-- [ ] Function calling 执行管道
+- [x] Function calling 执行管道
 - [x] Connector 管理 UI
 
 ### Phase 3：Tasks + Automation
@@ -49,15 +49,15 @@
 
 ### Phase 4：RAG + Memory
 
-- [ ] 文件分块与向量化管道
-- [ ] pgvector 相似度检索
+- [x] 文件分块与向量化管道
+- [x] pgvector 相似度检索
 - [ ] Memory 持久化与注入逻辑
 
 ### Phase 5：发布与市场
 
-- [ ] Agent 发布流程
-- [ ] 公开 Agent 页面
-- [ ] Agent 市场 UI
+- [x] Agent 发布流程
+- [x] 公开 Agent 页面
+- [x] Agent 市场 UI
 - [ ] 订阅与计费
 
 ---

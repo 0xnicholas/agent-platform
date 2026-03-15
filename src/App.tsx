@@ -18,6 +18,7 @@ import { FilesPage } from './components/files/FilesPage'
 import { ProfilePage } from './components/settings/ProfilePage'
 import { SettingsPage } from './components/settings/SettingsPage'
 import { MarketplacePage } from './components/marketplace/MarketplacePage'
+import { PricingPage } from './components/settings/PricingPage'
 import { ConnectorManagePage } from './components/connector/ConnectorManagePage'
 import { AuthPage } from './components/auth/AuthPage'
 import { DebugPanel } from './components/debug/DebugPanel'
@@ -94,6 +95,7 @@ function AppRoutes() {
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/marketplace" element={<MarketplacePage />} />
+        <Route path="/pricing" element={<PricingPage />} />
         <Route path="/chat" element={<ChatListPage />} />
       </Route>
 
