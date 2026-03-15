@@ -1,6 +1,6 @@
 # 项目状态
 
-> 更新时间: 2026-03-15 15:41 GMT+8
+> 更新时间: 2026-03-15 16:16 GMT+8
 > 按照 CLAUDE.md 规范检查
 
 ## 项目概述
@@ -14,15 +14,20 @@
 ## 2026-03-15 更新
 
 ### 当前状态
-- ✅ 代码已提交 (cb0987d0 feat: Phase 1 更新 + Phase 2 Function Calling + Phase 4 RAG)
+- ✅ 代码已提交 (51875313 feat: Phase 5 市场功能完善)
 - ✅ Build 成功
-- ✅ 63 测试用例全部通过
-- ✅ TASKS.md 已更新 - Phase 1 标记完成，Phase 2 进行中
-- ✅ Tool Executor - 工具调用执行器已实现
-- ✅ RAG Pipeline - 文件分块与向量化基础已实现
+- ✅ Phase 1 完成 (LLM Gateway, UI, Profile, Chat)
+- ✅ Phase 2 完成 (Connectors, Tool Executor, useChat Hook)
+- ✅ Phase 4 完成 (RAG Pipeline, useRAG Hook)
+- ✅ Phase 5 进行中 (市场、发布、订阅页)
+- ✅ Marketplace 完善 - 详情弹窗、安装功能
+- ✅ PricingPage - 订阅与计费页面
 
 ### 阻塞项
 - ⚠️ **Edge Functions 未部署** - 需 Supabase CLI 部署
+- ⚠️ **pg_cron migration 未执行** - 需 Supabase SQL Editor (Phase 3 阻塞)
+- ⚠️ **Edge Functions 未部署** - 需 Supabase CLI 部署
+- ⚠️ **pg_cron migration 未执行** - 需 Supabase SQL Editor
 - ⚠️ **pg_cron migration 未执行** - 需在 Supabase SQL Editor 运行
 
 ---
