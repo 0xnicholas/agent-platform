@@ -3,7 +3,7 @@
  * 参考 https://www.shopclawmart.com/ 设计
  */
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Search, Star, Download, Loader2, Sparkles, Zap, Check, ArrowRight, User, Package } from 'lucide-react'
 import { PageContainer } from '@components/layout/PageContainer'
@@ -19,6 +19,7 @@ import {
   installMarketplaceAgent, 
   type MarketplaceAgent 
 } from '@lib/supabase/marketplace'
+import { createAgent } from '@lib/supabase/agents'
 
 interface AgentDetailModalProps {
   agent: MarketplaceAgent | null
@@ -149,15 +150,16 @@ function HeroSection() {
             <Button 
               size="lg" 
               className="bg-white text-primary-600 hover:bg-primary-50"
-              onClick={() => navigate('/agents/new')}
+              onClick={handleCreateAgent}
+              disabled={isCreating}
             >
-              创建自己的 Agent
+              {isCreating ? '创建中...' : '创建自己的 Agent'}
             </Button>
             <Button 
               size="lg" 
-              variant="outline" 
-              className="border-white/30 text-white hover:bg-white/10"
-              onClick={() => document.getElementById('browse')?.scrollIntoView({ behavior: 'smooth' })}
+              variant="ghost"
+              className="border border-white/30 text-white hover:bg-white/10"
+              onClick={() => browseRef.current?.scrollIntoView({ behavior: 'smooth' })}
             >
               浏览市场 <ArrowRight className="ml-2 w-4 h-4" />
             </Button>
@@ -278,6 +280,8 @@ export function MarketplacePage() {
   const [search, setSearch] = useState('')
   const [category, setCategory] = useState('all')
   const [isLoading, setIsLoading] = useState(true)
+  const [isCreating, setIsCreating] = useState(false)
+  const browseRef = useRef<HTMLDivElement>(null)
   
   // Modal 状态
   const [selectedAgent, setSelectedAgent] = useState<MarketplaceAgent | null>(null)
@@ -337,6 +341,26 @@ export function MarketplacePage() {
     setIsModalOpen(true)
   }
 
+  // 创建新 Agent（与首页一致）
+  const handleCreateAgent = async () => {
+    setIsCreating(true)
+    try {
+      const agent = await createAgent({
+        name: `Agent_${Date.now()}`,
+        description: '',
+        profile: { identity: '', principles: '', tone: '', userContext: '' },
+        model_config: { model: 'kimi-turbo' },
+      })
+      toast.success('创建成功！')
+      navigate(`/agents/${agent.id}`)
+    } catch (error: any) {
+      console.error('Failed to create agent:', error)
+      toast.error('创建失败，请稍后重试')
+    } finally {
+      setIsCreating(false)
+    }
+  }
+
   const handleInstall = async (agentId: string) => {
     setIsInstalling(true)
     try {
@@ -358,7 +382,7 @@ export function MarketplacePage() {
       <HeroSection />
 
       {/* 搜索和筛选 */}
-      <div id="browse" className="bg-white border-b">
+      <div ref={browseRef} className="bg-white border-b">
         <div className="max-w-6xl mx-auto px-6 py-4">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="relative flex-1">
@@ -405,8 +429,8 @@ export function MarketplacePage() {
                   : '市场暂无 Agent，快去发布第一个吧！'}
               </p>
               {!search && category === 'all' && (
-                <Button variant="primary" onClick={() => navigate('/agents/new')}>
-                  创建 Agent
+                <Button variant="primary" onClick={handleCreateAgent} disabled={isCreating}>
+                  {isCreating ? '创建中...' : '创建 Agent'}
                 </Button>
               )}
             </CardContent>
