@@ -26,9 +26,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                 variant === 'primary',
               'bg-secondary text-white hover:bg-secondary-light focus:ring-gray-500':
                 variant === 'secondary',
-              'border border-gray-300 bg-white hover:bg-gray-50 focus:ring-gray-500':
+              'bg-secondary text-white hover:bg-secondary-light focus:ring-gray-500 border-none':
                 variant === 'outline',
-              'hover:bg-gray-100 focus:ring-gray-500': variant === 'ghost',
+              'bg-secondary/10 text-gray-900 hover:bg-secondary/20 focus:ring-gray-500':
+                variant === 'ghost',
               'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500':
                 variant === 'danger',
               'px-3 py-1.5 text-sm': size === 'sm',
