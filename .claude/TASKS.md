@@ -42,7 +42,7 @@
 
 ### Phase 3：Tasks + Automation
 
-- [ ] Task 数据模型与调度（Supabase pg_cron）
+- [x] Task 调度替代方案 (Edge Function)
 - [ ] 事件触发机制
 - [ ] ExecutionSummary 结构化生成
 - [ ] Task 历史与监控 UI
