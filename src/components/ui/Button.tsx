@@ -30,7 +30,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                 variant === 'outline',
               'bg-secondary/10 text-gray-900 hover:bg-secondary/20 focus:ring-gray-500':
                 variant === 'ghost',
-              'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500':
+              'bg-secondary text-white hover:bg-secondary-light focus:ring-gray-500':
                 variant === 'danger',
               'px-3 py-1.5 text-sm': size === 'sm',
               'px-4 py-2 text-sm': size === 'md',
