@@ -73,6 +73,19 @@ const connectorTypes: ConnectorTypeInfo[] = [
       { key: 'client_secret', label: 'Client Secret', type: 'password' },
     ],
   },
+  {
+    type: 'gmail',
+    name: 'Gmail',
+    icon: '📧',
+    description: 'Gmail 邮件发送和读取',
+    color: 'bg-red-500',
+    authUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
+    fields: [
+      { key: 'client_id', label: 'Client ID', type: 'text' },
+      { key: 'client_secret', label: 'Client Secret', type: 'password' },
+      { key: 'refresh_token', label: 'Refresh Token', type: 'password' },
+    ],
+  },
 ]
 
 export function ConnectorManagePage() {
