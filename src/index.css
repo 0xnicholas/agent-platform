@@ -7,13 +7,14 @@
   line-height: 1.5;
   font-weight: 400;
   color: #213547;
-  background-color: #f9fafb;
+  background-color: #faf9f5;
 }
 
 body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  background-color: #faf9f5;
 }
 
 /* Toast 动画 */

@@ -19,6 +19,10 @@ export default {
           800: '#075985',
           900: '#0c4a6e',
         },
+        secondary: {
+          DEFAULT: 'rgba(11, 11, 11, 0.94)',
+          light: 'rgba(11, 11, 11, 0.85)',
+        },
       },
     },
   },
