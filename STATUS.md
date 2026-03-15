@@ -1,6 +1,6 @@
 # 项目状态
 
-> 更新时间: 2026-03-15 16:16 GMT+8
+> 更新时间: 2026-03-15 16:30 GMT+8
 > 按照 CLAUDE.md 规范检查
 
 ## 项目概述
@@ -24,10 +24,8 @@
 - ✅ PricingPage - 订阅与计费页面
 
 ### 阻塞项
-- ⚠️ **Edge Functions 未部署** - 需 Supabase CLI 部署
-- ⚠️ **pg_cron migration 未执行** - 需 Supabase SQL Editor (Phase 3 阻塞)
-- ⚠️ **Edge Functions 未部署** - 需 Supabase CLI 部署
-- ⚠️ **pg_cron migration 未执行** - 需 Supabase SQL Editor
+- ✅ **Edge Functions 已部署** - llm-chat, task-run, rag-ingest, rag-retrieve, tool-call
+- ⚠️ **pg_cron migration** - 需在 Supabase SQL Editor 手动执行 (权限问题)
 - ⚠️ **pg_cron migration 未执行** - 需在 Supabase SQL Editor 运行
 
 ---
