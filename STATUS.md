@@ -1,6 +1,6 @@
 # 项目状态
 
-> 更新时间: 2026-03-15 17:26 GMT+8
+> 更新时间: 2026-03-16 01:59 GMT+8
 > 按照 CLAUDE.md 规范检查
 
 ## 项目概述
@@ -11,17 +11,22 @@
 
 ---
 
-## 2026-03-15 更新
+## 2026-03-16 更新
 
 ### 当前状态
-- ✅ 代码已提交 (cb6fc4f0)
+- ✅ 代码已提交
 - ✅ Build 成功
+- ✅ 63 测试用例通过
 - ✅ Phase 1 完成 (LLM Gateway, UI, Profile, Chat)
 - ✅ Phase 2 完成 (Connectors, Tool Executor, useChat Hook)
+- ✅ Phase 3 完成 (Tasks + 替代调度方案)
 - ✅ Phase 4 完成 (RAG Pipeline, useRAG Hook)
 - ✅ Phase 5 完成 (市场、发布、订阅页)
+- ✅ Skills 模块完成 (能力声明与 Integrations 交互)
+- ✅ UI 完善 (Empty 组件、全局按钮样式)
+- ✅ README 完善
 - ✅ Edge Functions 全部部署
-- ⚠️ Task 调度 - 手动触发 (pg_cron 需 Pro)
+- ✅ pg_cron 替代方案 (task-scheduler)
 
 ### 阻塞项
 - 无
