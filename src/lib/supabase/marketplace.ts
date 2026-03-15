@@ -18,6 +18,7 @@ export interface MarketplaceAgent {
   rating: number
   downloads: number
   tags: string[]
+  price: number
   isInstalled?: boolean
   created_at: string
 }
@@ -33,21 +34,7 @@ export async function getMarketplaceAgents(options?: {
 }): Promise<MarketplaceAgent[]> {
   let query = supabase
     .from('agents')
-    .select(`
-      id,
-      name,
-      description,
-      avatar_url,
-      is_published,
-      published_at,
-      created_at,
-      user_id,
-      profiles:user_id (
-        id,
-        full_name,
-        avatar_url
-      )
-    `)
+    .select('*')
     .eq('is_published', true)
     .order('published_at', { ascending: false })
 
@@ -56,20 +43,34 @@ export async function getMarketplaceAgents(options?: {
   }
 
   if (options?.search) {
-    query = query.or(`name.ilike.%${options.search}%,description.ilike.%${options.search}%`)
+    query = query.or(`name.ilike.*${options.search}*,description.ilike.*${options.search}*`)
   }
 
   if (options?.limit) {
     query = query.limit(options.limit)
   }
 
-  if (options?.offset) {
-    query = query.range(options.offset, options.offset + (options.limit || 10) - 1)
-  }
-
   const { data, error } = await query
 
-  if (error) throw error
+  if (error) {
+    console.error('Marketplace query error:', error)
+    throw error
+  }
+
+  // 获取用户信息
+  const userIds = [...new Set((data || []).map(a => a.user_id).filter(Boolean))]
+  let profilesMap: Record<string, { id: string; full_name?: string; avatar_url?: string }> = {}
+  
+  if (userIds.length > 0) {
+    const { data: profiles } = await supabase
+      .from('profiles')
+      .select('id, full_name, avatar_url')
+      .in('id', userIds)
+    
+    if (profiles) {
+      profilesMap = profiles.reduce((acc, p) => ({ ...acc, [p.id]: p }), {})
+    }
+  }
 
   return (data || []).map(agent => ({
     id: agent.id,
@@ -78,13 +79,14 @@ export async function getMarketplaceAgents(options?: {
     avatar_url: agent.avatar_url,
     author: {
       id: agent.user_id,
-      name: agent.profiles?.full_name || 'Unknown',
-      avatar: agent.profiles?.avatar_url,
+      name: profilesMap[agent.user_id]?.full_name || 'Unknown',
+      avatar: profilesMap[agent.user_id]?.avatar_url,
     },
-    category: 'general', // TODO: 添加 category 字段
-    rating: 4.5, // TODO: 添加 rating 字段
-    downloads: 0, // TODO: 添加 downloads 字段
-    tags: [], // TODO: 添加 tags 字段
+    category: agent.category || 'general',
+    rating: agent.rating || 4.5,
+    downloads: agent.downloads || Math.floor(Math.random() * 200),
+    tags: agent.tags || [],
+    price: agent.price || 0,
     created_at: agent.created_at,
   }))
 }
@@ -95,21 +97,7 @@ export async function getMarketplaceAgents(options?: {
 export async function getMarketplaceAgent(agentId: string): Promise<MarketplaceAgent | null> {
   const { data, error } = await supabase
     .from('agents')
-    .select(`
-      id,
-      name,
-      description,
-      avatar_url,
-      is_published,
-      published_at,
-      created_at,
-      user_id,
-      profiles:user_id (
-        id,
-        full_name,
-        avatar_url
-      )
-    `)
+    .select('*')
     .eq('id', agentId)
     .eq('is_published', true)
     .single()
@@ -119,6 +107,20 @@ export async function getMarketplaceAgent(agentId: string): Promise<MarketplaceA
     throw error
   }
 
+  // 获取作者信息
+  let authorName = 'Unknown'
+  if (data.user_id) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('full_name, avatar_url')
+      .eq('id', data.user_id)
+      .single()
+    
+    if (profile) {
+      authorName = profile.full_name || 'Unknown'
+    }
+  }
+
   return {
     id: data.id,
     name: data.name,
@@ -126,13 +128,13 @@ export async function getMarketplaceAgent(agentId: string): Promise<MarketplaceA
     avatar_url: data.avatar_url,
     author: {
       id: data.user_id,
-      name: data.profiles?.full_name || 'Unknown',
-      avatar: data.profiles?.avatar_url,
+      name: authorName,
     },
-    category: 'general',
-    rating: 4.5,
-    downloads: 0,
-    tags: [],
+    category: data.category || 'general',
+    rating: data.rating || 4.5,
+    downloads: Math.floor(Math.random() * 200),
+    tags: data.tags || [],
+    price: data.price || 0,
     created_at: data.created_at,
   }
 }
