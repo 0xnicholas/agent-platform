@@ -144,12 +144,10 @@ export function useRAG({ agentId }: UseRAGOptions) {
 async function readFileContent(file: File): Promise<string> {
   const type = file.type
 
-  if (type === 'text/plain' || type === 'text/markdown' || type === 'text/csv') {
+  if (type === 'text/plain' || type === 'text/markdown' || type === 'text/csv' || type === 'text/html') {
     return await file.text()
   }
 
-  // 对于 PDF/DOC 等，需要解析
-  // TODO: 实现 PDF/DOC 解析
-  // 目前返回占位符
-  return `[文件: ${file.name}]\n\n此文件类型暂不支持直接读取，请转换为 txt/md 格式。`
+  // PDF 需要服务端解析，返回提示让用户转换格式
+  return `[文件: ${file.name}]\n\n此文件类型暂不支持直接读取，请转换为 txt/md 格式后重新上传。支持的格式: txt, md, csv, html`
 }
