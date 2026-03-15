@@ -122,7 +122,12 @@ function AgentDetailModal({ agent, isOpen, onClose, onInstall, isInstalling }: A
 }
 
 // Hero 组件
-function HeroSection() {
+interface HeroSectionProps {
+  onCreateAgent: () => void
+  isCreating: boolean
+}
+
+function HeroSection({ onCreateAgent, isCreating }: HeroSectionProps) {
   const navigate = useNavigate()
   
   return (
@@ -150,7 +155,7 @@ function HeroSection() {
             <Button 
               size="lg" 
               className="bg-white text-primary-600 hover:bg-primary-50"
-              onClick={handleCreateAgent}
+              onClick={onCreateAgent}
               disabled={isCreating}
             >
               {isCreating ? '创建中...' : '创建自己的 Agent'}
@@ -379,7 +384,7 @@ export function MarketplacePage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero */}
-      <HeroSection />
+      <HeroSection onCreateAgent={handleCreateAgent} isCreating={isCreating} />
 
       {/* 搜索和筛选 */}
       <div ref={browseRef} className="bg-white border-b">

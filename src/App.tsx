@@ -105,7 +105,7 @@ function AppRoutes() {
         <Route path="/agents/:id/chat" element={<AgentChatPage />} />
         <Route path="/agents/:id/memory" element={<MemoryPage />} />
         <Route path="/agents/:id/integrations" element={<IntegrationsPage />} />
-        <Route path="/agents/:id/profile" element={<AgentSettingsPage />} />
+        <Route path="/agents/:id/profile" element={<ProfilePage />} />
         <Route path="/agents/:id/knowledge" element={<FilesPage />} />
         <Route path="/agents/:id/tasks" element={<TasksPage />} />
         <Route path="/agents/:id/settings" element={<AgentSettingsPage />} />
