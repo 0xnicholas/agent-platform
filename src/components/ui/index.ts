@@ -8,6 +8,7 @@ export { Loading, PageLoading } from './Loading'
 export { Tabs, TabsList, TabsTrigger, TabsContent } from './Tabs'
 export { ToastContainer } from './Toast'
 export { Skeleton, CardSkeleton, ListSkeleton, ChatSkeleton } from './Skeleton'
+export { Empty } from './Empty'
 export { 
   ResponsiveContainer, 
   BottomNav, 
