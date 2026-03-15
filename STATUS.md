@@ -25,7 +25,7 @@
 
 ### 阻塞项
 - ✅ **Edge Functions 已部署** - llm-chat, task-run, rag-ingest, rag-retrieve, tool-call, agents
-- ⚠️ **pg_cron migration** - 需在 Supabase SQL Editor 手动执行 (权限问题)
+- ⚠️ **pg_cron** - 不可用 (需 Supabase Pro)，改用手动触发或外部 cron
 
 ---
 
