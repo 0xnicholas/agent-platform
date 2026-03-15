@@ -3,7 +3,6 @@
  */
 
 import { supabase } from './client'
-import type { Agent } from '@types/agent'
 
 export interface Memory {
   id: string

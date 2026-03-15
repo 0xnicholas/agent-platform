@@ -21,7 +21,7 @@ import {
   type Connector 
 } from '@lib/supabase/connectors'
 import { getAgent } from '@lib/supabase/agents'
-import type { Agent } from '../../types/agent'
+import type { Agent } from '@lib/supabase/agents'
 
 export function IntegrationsPage() {
   const { id: agentId } = useParams<{ id: string }>()

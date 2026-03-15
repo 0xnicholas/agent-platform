@@ -36,7 +36,7 @@ export async function uploadKnowledgeFile(
 ): Promise<KnowledgeFile> {
   // 1. 上传文件到 Storage
   const filePath = `knowledge/${agentId}/${Date.now()}-${file.name}`
-  const { data: uploadData, error: uploadError } = await supabase.storage
+  const { data: _uploadData, error: uploadError } = await supabase.storage
     .from('knowledge')
     .upload(filePath, file)
 

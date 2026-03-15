@@ -15,18 +15,18 @@ import {
   type ExpertDomain,
   type CaseStudy,
   type FAQ 
-} from '../types/expert'
+} from 'types/expert'
 
 interface ExpertAgentConfigProps {
   agentId: string
 }
 
-export function ExpertAgentConfig({ agentId }: ExpertAgentConfigProps) {
+export function ExpertAgentConfig({ agentId: _agentId }: ExpertAgentConfigProps) {
   const [domain, setDomain] = useState<ExpertDomain>('customer_service')
   const [expertise, setExpertise] = useState<string[]>([])
   const [newExpertise, setNewExpertise] = useState('')
-  const [caseStudies, setCaseStudies] = useState<CaseStudy[]>([])
-  const [faqs, setFaqs] = useState<FAQ[]>([])
+  const [caseStudies] = useState<CaseStudy[]>([])
+  const [faqs] = useState<FAQ[]>([])
 
   const addExpertise = () => {
     if (newExpertise.trim() && !expertise.includes(newExpertise.trim())) {

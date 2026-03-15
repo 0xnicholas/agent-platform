@@ -5,7 +5,7 @@
 
 import { callKimi, streamKimi } from './providers/kimi'
 import { callMiniMax, streamMiniMax } from './providers/minimax'
-import type { LLMRequest, LLMResponse, ModelConfig } from './types'
+import type { LLMRequest, LLMResponse } from './types'
 
 // API Keys - 从环境变量获取
 const API_KEYS = {

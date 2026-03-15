@@ -2,9 +2,9 @@
  * Connector 模块导出
  */
 
-export * from './feishu'
+export { sendMessage as feishuSendMessage } from './feishu'
 export * from './feishu-tools'
-export * from './slack'
+export { sendMessage as slackSendMessage, getMessages as slackGetMessages } from './slack'
 export * from './slack-tools'
 export * from './github'
 export * from './github-tools'

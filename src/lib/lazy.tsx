@@ -10,8 +10,7 @@ import { Loading } from '@components/ui/Loading'
  * 懒加载组件包装
  */
 export function lazyWithRetry<T extends React.ComponentType<any>>(
-  factory: () => Promise<{ default: T }>,
-  fallback?: ReactNode
+  factory: () => Promise<{ default: T }>
 ) {
   return lazy(() =>
     factory().catch((error) => {

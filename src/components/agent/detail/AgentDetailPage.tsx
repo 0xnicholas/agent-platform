@@ -7,7 +7,7 @@ import { useParams } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { PageContainer } from '../../layout/PageContainer'
 import { getAgent } from '@lib/supabase/agents'
-import type { Agent } from '../../types/agent'
+import type { Agent } from '@lib/supabase/agents'
 
 export function AgentDetailPage() {
   const { id } = useParams<{ id: string }>()

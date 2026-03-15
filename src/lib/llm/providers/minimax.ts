@@ -3,7 +3,7 @@
  * MiniMax LLM API
  */
 
-import type { Message, ModelConfig, LLMResponse, ToolDefinition } from './types'
+import type { Message, ModelConfig, LLMResponse, ToolDefinition } from '../types'
 
 interface MiniMaxRequestBody {
   model: string

@@ -20,7 +20,6 @@ import {
 } from 'lucide-react'
 import { PageContainer } from '@components/layout/PageContainer'
 import { Card, CardContent } from '@components/ui/Card'
-import { Button } from '@components/ui/Button'
 import { Avatar } from '@components/ui/Avatar'
 import { Badge } from '@components/ui/Badge'
 import { getAgents, createAgent } from '@lib/supabase/agents'

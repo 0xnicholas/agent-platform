@@ -3,7 +3,7 @@
  * 月之暗面 LLM API
  */
 
-import type { Message, ModelConfig, LLMResponse, ToolDefinition } from './types'
+import type { Message, ModelConfig, LLMResponse, ToolDefinition } from '../types'
 
 interface KimiRequestBody {
   model: string

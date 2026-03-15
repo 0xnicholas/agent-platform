@@ -30,7 +30,7 @@ const modeLabels = {
 }
 
 export function TeamsPage() {
-  const [teams, setTeams] = useState<Team[]>(mockTeams)
+  const [teams] = useState<Team[]>(mockTeams)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [newTeam, setNewTeam] = useState({
     name: '',
@@ -42,10 +42,6 @@ export function TeamsPage() {
     // TODO: 创建团队
     setIsModalOpen(false)
     setNewTeam({ name: '', description: '', mode: 'sequential' })
-  }
-
-  const modeIcon = (mode: string) => {
-    return <ArrowRight className="w-4 h-4" />
   }
 
   return (
