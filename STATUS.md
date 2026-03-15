@@ -1,6 +1,6 @@
 # 项目状态
 
-> 更新时间: 2026-03-15 16:53 GMT+8
+> 更新时间: 2026-03-15 17:26 GMT+8
 > 按照 CLAUDE.md 规范检查
 
 ## 项目概述
@@ -14,18 +14,17 @@
 ## 2026-03-15 更新
 
 ### 当前状态
-- ✅ 代码已提交 (51875313 feat: Phase 5 市场功能完善)
+- ✅ 代码已提交 (cb6fc4f0)
 - ✅ Build 成功
 - ✅ Phase 1 完成 (LLM Gateway, UI, Profile, Chat)
 - ✅ Phase 2 完成 (Connectors, Tool Executor, useChat Hook)
 - ✅ Phase 4 完成 (RAG Pipeline, useRAG Hook)
-- ✅ Phase 5 进行中 (市场、发布、订阅页)
-- ✅ Marketplace 完善 - 详情弹窗、安装功能
-- ✅ PricingPage - 订阅与计费页面
+- ✅ Phase 5 完成 (市场、发布、订阅页)
+- ✅ Edge Functions 全部部署
+- ⚠️ Task 调度 - 手动触发 (pg_cron 需 Pro)
 
 ### 阻塞项
-- ✅ **Edge Functions 已部署** - llm-chat, task-run, rag-ingest, rag-retrieve, tool-call, agents
-- ⚠️ **pg_cron** - 不可用 (需 Supabase Pro)，改用手动触发或外部 cron
+- 无
 
 ---
 
