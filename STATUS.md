@@ -1,6 +1,6 @@
 # 项目状态
 
-> 更新时间: 2026-03-15 13:31 GMT+8
+> 更新时间: 2026-03-15 15:41 GMT+8
 > 按照 CLAUDE.md 规范检查
 
 ## 项目概述
@@ -14,10 +14,12 @@
 ## 2026-03-15 更新
 
 ### 当前状态
-- ✅ 代码已提交 (3bd7e7bc feat: 完善项目功能)
-- ✅ API Keys 已配置在 .env.local
-- ✅ Build 成功 ✅ 63 测试用例全部通过
-- ✅ TypeScript 类型错误修复 (构建通过)
+- ✅ 代码已提交 (cb0987d0 feat: Phase 1 更新 + Phase 2 Function Calling + Phase 4 RAG)
+- ✅ Build 成功
+- ✅ 63 测试用例全部通过
+- ✅ TASKS.md 已更新 - Phase 1 标记完成，Phase 2 进行中
+- ✅ Tool Executor - 工具调用执行器已实现
+- ✅ RAG Pipeline - 文件分块与向量化基础已实现
 
 ### 阻塞项
 - ⚠️ **Edge Functions 未部署** - 需 Supabase CLI 部署
