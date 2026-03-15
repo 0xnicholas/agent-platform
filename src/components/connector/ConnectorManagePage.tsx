@@ -26,7 +26,17 @@ interface GlobalConnector {
 }
 
 // 可用的 Connector 类型
-const connectorTypes = [
+interface ConnectorTypeInfo {
+  type: string
+  name: string
+  icon: string
+  description: string
+  color: string
+  authUrl?: string
+  fields: { key: string; label: string; type: string }[]
+}
+
+const connectorTypes: ConnectorTypeInfo[] = [
   {
     type: 'feishu',
     name: '飞书',

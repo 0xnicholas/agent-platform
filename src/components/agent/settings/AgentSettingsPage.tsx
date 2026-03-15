@@ -103,7 +103,7 @@ export function AgentSettingsPage() {
                   {agent.is_published ? '此 Agent 已在市场上可见' : '此 Agent 仅你可见'}
                 </p>
               </div>
-              <Button onClick={handlePublish} variant={agent.is_published ? 'outline' : 'default'}>
+              <Button onClick={handlePublish} variant={agent.is_published ? 'outline' : 'secondary'}>
                 {agent.is_published ? '取消发布' : '发布'}
               </Button>
             </div>

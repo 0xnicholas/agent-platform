@@ -7,7 +7,7 @@ import { clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 
 interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
-  variant?: 'default' | 'success' | 'warning' | 'error' | 'info'
+  variant?: 'default' | 'success' | 'warning' | 'error' | 'info' | 'outline'
 }
 
 const variantClasses = {
@@ -16,6 +16,7 @@ const variantClasses = {
   warning: 'bg-yellow-100 text-yellow-700',
   error: 'bg-red-100 text-red-700',
   info: 'bg-blue-100 text-blue-700',
+  outline: 'border border-gray-300 text-gray-700 bg-white',
 }
 
 export function Badge({ 

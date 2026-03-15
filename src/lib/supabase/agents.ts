@@ -43,6 +43,7 @@ export interface CreateAgentInput {
   avatar_url?: string
   profile?: Agent['profile']
   model_config?: Agent['model_config']
+  is_published?: boolean
 }
 
 /**

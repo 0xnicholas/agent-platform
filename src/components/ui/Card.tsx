@@ -72,3 +72,19 @@ export const CardFooter = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivEleme
 )
 
 CardFooter.displayName = 'CardFooter'
+
+export const CardTitle = forwardRef<HTMLHeadingElement, HTMLAttributes<HTMLHeadingElement>>(
+  ({ className, children, ...props }, ref) => {
+    return (
+      <h3
+        ref={ref}
+        className={twMerge('text-lg font-semibold text-gray-900', className)}
+        {...props}
+      >
+        {children}
+      </h3>
+    )
+  }
+)
+
+CardTitle.displayName = 'CardTitle'
