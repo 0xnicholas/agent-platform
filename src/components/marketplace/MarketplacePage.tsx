@@ -3,7 +3,8 @@
  */
 
 import { useState, useEffect } from 'react'
-import { Search, Star, Download, ExternalLink, Copy, Check, X } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { Search, Star, Download, ExternalLink, Copy, Check, X, Loader2 } from 'lucide-react'
 import { PageContainer } from '@components/layout/PageContainer'
 import { Card, CardContent } from '@components/ui/Card'
 import { Button } from '@components/ui/Button'
@@ -11,21 +12,12 @@ import { Input } from '@components/ui/Input'
 import { Badge } from '@components/ui/Badge'
 import { Avatar } from '@components/ui/Avatar'
 import { Modal } from '@components/ui/Modal'
-
-interface MarketplaceAgent {
-  id: string
-  name: string
-  description: string
-  author: {
-    name: string
-    avatar?: string
-  }
-  category: string
-  rating: number
-  downloads: number
-  tags: string[]
-  isInstalled?: boolean
-}
+import { toast } from '@stores/toastStore'
+import { 
+  getMarketplaceAgents, 
+  installMarketplaceAgent, 
+  type MarketplaceAgent 
+} from '@lib/supabase/marketplace'
 
 interface AgentDetailModalProps {
   agent: MarketplaceAgent | null
@@ -67,14 +59,16 @@ function AgentDetailModal({ agent, isOpen, onClose, onInstall, isInstalling }: A
         </div>
 
         {/* 标签 */}
-        <div>
-          <h4 className="font-medium mb-2">标签</h4>
-          <div className="flex flex-wrap gap-2">
-            {agent.tags.map((tag) => (
-              <Badge key={tag} variant="default">{tag}</Badge>
-            ))}
+        {agent.tags.length > 0 && (
+          <div>
+            <h4 className="font-medium mb-2">标签</h4>
+            <div className="flex flex-wrap gap-2">
+              {agent.tags.map((tag) => (
+                <Badge key={tag} variant="default">{tag}</Badge>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* 功能特点 */}
         <div>
@@ -95,7 +89,6 @@ function AgentDetailModal({ agent, isOpen, onClose, onInstall, isInstalling }: A
           variant="primary" 
           onClick={() => onInstall(agent.id)}
           loading={isInstalling}
-          disabled={agent.isInstalled}
         >
           {agent.isInstalled ? '已安装' : '安装 Agent'}
         </Button>
@@ -105,114 +98,64 @@ function AgentDetailModal({ agent, isOpen, onClose, onInstall, isInstalling }: A
 }
 
 const CATEGORIES = [
-  { value: 'all', label: '全部' },
-  { value: 'customer_service', label: '客服' },
-  { value: 'sales', label: '销售' },
-  { value: 'programming', label: '编程' },
-  { value: 'education', label: '教育' },
-  { value: 'legal', label: '法律' },
-  { value: 'finance', label: '金融' },
-]
-
-// 模拟市场数据
-const MOCK_MARKETPLACE_AGENTS: MarketplaceAgent[] = [
-  {
-    id: '1',
-    name: '客服小助手',
-    description: '专业的客服助手，支持常见问题解答和情绪安抚。可以处理售前咨询、售后服务、投诉处理等多种场景。',
-    author: { name: '官方' },
-    category: 'customer_service',
-    rating: 4.8,
-    downloads: 1234,
-    tags: ['客服', '售前', '售后', '情绪安抚'],
-  },
-  {
-    id: '2',
-    name: '编程导师',
-    description: '帮助你学习编程，解答技术问题。支持多种编程语言，提供代码审查和优化建议。',
-    author: { name: 'DevTeam' },
-    category: 'programming',
-    rating: 4.9,
-    downloads: 2345,
-    tags: ['编程', '教学', '代码审查', '技术问答'],
-  },
-  {
-    id: '3',
-    name: '销售顾问',
-    description: '专业销售助手，帮你撰写销售文案、客户跟进话术和销售策略分析。',
-    author: { name: 'SalesPro' },
-    category: 'sales',
-    rating: 4.7,
-    downloads: 856,
-    tags: ['销售', '文案', '客户跟进'],
-  },
-  {
-    id: '4',
-    name: '法律助手',
-    description: '提供法律咨询、合同审查和合规建议。帮助您了解常见法律问题。',
-    author: { name: 'LegalTech' },
-    category: 'legal',
-    rating: 4.6,
-    downloads: 543,
-    tags: ['法律', '合同审查', '合规'],
-  },
-  {
-    id: '5',
-    name: '财务分析师',
-    description: '帮助你分析财务数据、投资建议和风险管理。提供专业的财务分析。',
-    author: { name: 'FinanceAI' },
-    category: 'finance',
-    rating: 4.8,
-    downloads: 432,
-    tags: ['财务', '投资', '分析'],
-  },
-  {
-    id: '6',
-    name: '英语老师',
-    description: '专业的英语学习助手，提供口语练习、语法解释和写作指导。',
-    author: { name: 'EduTech' },
-    category: 'education',
-    rating: 4.9,
-    downloads: 1876,
-    tags: ['英语', '学习', '口语', '写作'],
-  },
+  { value: 'all', label: '全部', icon: '🏠' },
+  { value: 'customer_service', label: '客服', icon: '💬' },
+  { value: 'sales', label: '销售', icon: '💰' },
+  { value: 'programming', label: '编程', icon: '💻' },
+  { value: 'education', label: '教育', icon: '📚' },
+  { value: 'legal', label: '法律', icon: '⚖️' },
+  { value: 'finance', label: '金融', icon: '📊' },
 ]
 
 export function MarketplacePage() {
-  const [agents, setAgents] = useState<MarketplaceAgent[]>(MOCK_MARKETPLACE_AGENTS)
+  const navigate = useNavigate()
+  const [agents, setAgents] = useState<MarketplaceAgent[]>([])
   const [search, setSearch] = useState('')
   const [category, setCategory] = useState('all')
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+  const [isRefreshing, setIsRefreshing] = useState(false)
   
   // Modal 状态
   const [selectedAgent, setSelectedAgent] = useState<MarketplaceAgent | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isInstalling, setIsInstalling] = useState(false)
 
-  // 模拟从 API 加载数据
-  useEffect(() => {
-    loadMarketplaceAgents()
-  }, [])
-
-  const loadMarketplaceAgents = async () => {
-    setIsLoading(true)
+  // 加载市场 Agent
+  const loadAgents = async (refresh = false) => {
+    if (refresh) {
+      setIsRefreshing(true)
+    } else {
+      setIsLoading(true)
+    }
     try {
-      // TODO: 从 Supabase 加载公开的 agents
-      // const { data } = await supabase.from('agents').select('*').eq('is_published', true)
-      // setAgents(data || [])
+      const data = await getMarketplaceAgents({
+        category: category === 'all' ? undefined : category,
+        search: search || undefined,
+        limit: 50,
+      })
+      setAgents(data)
     } catch (error) {
       console.error('Failed to load marketplace agents:', error)
+      toast.error('加载失败，请稍后重试')
     } finally {
       setIsLoading(false)
+      setIsRefreshing(false)
     }
   }
 
-  const filteredAgents = agents.filter(agent => {
-    const matchSearch = agent.name.toLowerCase().includes(search.toLowerCase()) ||
-      agent.description.toLowerCase().includes(search.toLowerCase())
-    const matchCategory = category === 'all' || agent.category === category
-    return matchSearch && matchCategory
-  })
+  useEffect(() => {
+    loadAgents()
+  }, [category])
+
+  // 搜索防抖
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (search !== '' || category !== 'all') {
+        loadAgents(true)
+      }
+    }, 500)
+    return () => clearTimeout(timer)
+  }, [search])
 
   const handleAgentClick = (agent: MarketplaceAgent) => {
     setSelectedAgent(agent)
@@ -222,22 +165,14 @@ export function MarketplacePage() {
   const handleInstall = async (agentId: string) => {
     setIsInstalling(true)
     try {
-      // TODO: 调用 API 安装 agent
-      // await installAgent(agentId)
-      
-      // 模拟安装
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      // 更新本地状态
-      setAgents(prev => prev.map(a => 
-        a.id === agentId ? { ...a, isInstalled: true } : a
-      ))
-      
-      if (selectedAgent) {
-        setSelectedAgent({ ...selectedAgent, isInstalled: true })
-      }
+      const newAgentId = await installMarketplaceAgent(agentId)
+      toast.success('安装成功！')
+      setIsModalOpen(false)
+      // 跳转到新安装的 Agent
+      navigate(`/agents/${newAgentId}/chat`)
     } catch (error) {
       console.error('Failed to install agent:', error)
+      toast.error('安装失败，请稍后重试')
     } finally {
       setIsInstalling(false)
     }
@@ -267,6 +202,7 @@ export function MarketplacePage() {
               size="sm"
               onClick={() => setCategory(cat.value)}
             >
+              <span className="mr-1">{cat.icon}</span>
               {cat.label}
             </Button>
           ))}
@@ -277,18 +213,32 @@ export function MarketplacePage() {
       {isLoading ? (
         <Card>
           <CardContent className="py-12 text-center">
-            <p className="text-gray-500">加载中...</p>
+            <Loader2 className="w-8 h-8 animate-spin mx-auto text-primary-600" />
+            <p className="text-gray-500 mt-2">加载中...</p>
           </CardContent>
         </Card>
-      ) : filteredAgents.length === 0 ? (
+      ) : agents.length === 0 ? (
         <Card>
           <CardContent className="py-12 text-center">
-            <p className="text-gray-500">没有找到匹配的 Agent</p>
+            <p className="text-gray-500">
+              {search || category !== 'all' 
+                ? '没有找到匹配的 Agent' 
+                : '市场暂无 Agent，快去发布第一个吧！'}
+            </p>
+            {!search && category === 'all' && (
+              <Button 
+                variant="primary" 
+                className="mt-4"
+                onClick={() => navigate('/agents')}
+              >
+                去发布 Agent
+              </Button>
+            )}
           </CardContent>
         </Card>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredAgents.map((agent) => (
+          {agents.map((agent) => (
             <Card 
               key={agent.id} 
               className="hover:shadow-md transition-shadow cursor-pointer"
@@ -308,18 +258,20 @@ export function MarketplacePage() {
                 </div>
 
                 {/* 标签 */}
-                <div className="flex flex-wrap gap-1 mt-3">
-                  {agent.tags.slice(0, 3).map((tag) => (
-                    <Badge key={tag} variant="default" className="text-xs">
-                      {tag}
-                    </Badge>
-                  ))}
-                  {agent.tags.length > 3 && (
-                    <Badge variant="outline" className="text-xs">
-                      +{agent.tags.length - 3}
-                    </Badge>
-                  )}
-                </div>
+                {agent.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-1 mt-3">
+                    {agent.tags.slice(0, 3).map((tag) => (
+                      <Badge key={tag} variant="default" className="text-xs">
+                        {tag}
+                      </Badge>
+                    ))}
+                    {agent.tags.length > 3 && (
+                      <Badge variant="outline" className="text-xs">
+                        +{agent.tags.length - 3}
+                      </Badge>
+                    )}
+                  </div>
+                )}
 
                 {/* 统计 */}
                 <div className="flex items-center justify-between mt-4 pt-3 border-t">
@@ -333,9 +285,9 @@ export function MarketplacePage() {
                       {agent.downloads}
                     </span>
                   </div>
-                  {agent.isInstalled && (
-                    <Badge variant="success" className="text-xs">已安装</Badge>
-                  )}
+                  <span className="text-xs text-gray-400">
+                    {new Date(agent.created_at).toLocaleDateString('zh-CN')}
+                  </span>
                 </div>
               </CardContent>
             </Card>
