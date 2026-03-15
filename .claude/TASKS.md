@@ -2,7 +2,7 @@
 
 ## 当前阶段
 
-**Phase 1：Agent 基础**（进行中）
+**Phase 2：Connector 体系**（进行中）
 
 ---
 
@@ -10,35 +10,35 @@
 
 ### Phase 1：Agent 基础
 
-- [ ] Supabase 项目初始化
-  - [ ] 创建所有表（参考 DATABASE.md）
-  - [ ] 配置 RLS 策略
-  - [ ] 开启 pgvector 扩展
-  - [ ] 配置 Supabase Vault（用于 Connector credentials）
-- [ ] LLM 网关实现
-  - [ ] 统一 LLMRequest / LLMResponse 接口
-  - [ ] Claude（claude-sonnet-4-6）接入
-  - [ ] OpenAI（gpt-4o）接入
-  - [ ] Gemini（gemini-2.0-flash）接入
-  - [ ] Streaming 支持
-  - [ ] Token 用量记录到数据库
-- [ ] Profile 配置 UI
-  - [ ] Identity / Principles / Tone 编辑器
-  - [ ] Knowledge Files 上传
-  - [ ] User Context 编辑
-  - [ ] System prompt 实时预览
-- [ ] 基础对话界面
-  - [ ] Streaming 消息渲染
-  - [ ] 对话历史持久化
-  - [ ] 工具调用结果展示
+- [x] Supabase 项目初始化
+  - [x] 创建所有表（参考 DATABASE.md）
+  - [x] 配置 RLS 策略
+  - [x] 开启 pgvector 扩展
+  - [x] 配置 Supabase Vault（用于 Connector credentials）
+- [x] LLM 网关实现
+  - [x] 统一 LLMRequest / LLMResponse 接口
+  - [x] Claude（claude-sonnet-4-6）接入
+  - [x] OpenAI（gpt-4o）接入
+  - [x] Gemini（gemini-2.0-flash）接入
+  - [x] Streaming 支持
+  - [x] Token 用量记录到数据库
+- [x] Profile 配置 UI
+  - [x] Identity / Principles / Tone 编辑器
+  - [x] Knowledge Files 上传
+  - [x] User Context 编辑
+  - [x] System prompt 实时预览
+- [x] 基础对话界面
+  - [x] Streaming 消息渲染
+  - [x] 对话历史持久化
+  - [x] 工具调用结果展示
 
 ### Phase 2：Connector 体系
 
-- [ ] Connector 抽象接口设计
-- [ ] Gmail OAuth 接入
-- [ ] Slack OAuth 接入
+- [x] Connector 抽象接口设计
+- [x] Gmail Connector 接入
+- [x] Slack OAuth 接入
 - [ ] Function calling 执行管道
-- [ ] Connector 管理 UI
+- [x] Connector 管理 UI
 
 ### Phase 3：Tasks + Automation
 
