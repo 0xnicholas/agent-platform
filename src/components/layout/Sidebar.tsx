@@ -17,7 +17,8 @@ import {
   Plug,
   X,
   Home,
-  Sparkles
+  Sparkles,
+  Users
 } from 'lucide-react'
 import { useState } from 'react'
 import { useLocation } from 'react-router-dom'
@@ -49,6 +50,7 @@ export function Sidebar({ agentId, agentName, onClose }: SidebarProps) {
   const commonItems = [
     { to: '/', icon: Home, label: '首页' },
     { to: '/chat', icon: MessageSquare, label: 'Chat' },
+    { to: '/teams', icon: Users, label: 'Teams' },
     { to: '/tasks', icon: ListTodo, label: 'Tasks' },
     { to: '/settings', icon: Settings, label: 'Settings' },
   ]

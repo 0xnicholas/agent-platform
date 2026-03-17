@@ -24,6 +24,8 @@ import { ConnectorManagePage } from './components/connector/ConnectorManagePage'
 import { AuthPage } from './components/auth/AuthPage'
 import { DebugPanel } from './components/debug/DebugPanel'
 import { ToastContainer } from './components/ui/Toast'
+import { TeamsPage } from './components/teams/TeamsPage'
+import { TeamDetailPage } from './components/teams/TeamDetailPage'
 import { useEffect, useState } from 'react'
 import { supabase } from './lib/supabase/client'
 import { getAgent } from './lib/supabase/agents'
@@ -98,6 +100,8 @@ function AppRoutes() {
         <Route path="/marketplace" element={<MarketplacePage />} />
         <Route path="/pricing" element={<PricingPage />} />
         <Route path="/chat" element={<ChatListPage />} />
+        <Route path="/teams" element={<TeamsPage />} />
+        <Route path="/teams/:id" element={<TeamDetailPage />} />
       </Route>
 
       {/* Agent 详情页 Layout */}

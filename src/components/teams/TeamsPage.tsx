@@ -2,26 +2,25 @@
  * Teams 页面 - Agent 编排团队管理
  */
 
-import { useState } from 'react'
-import { Plus, Users, ArrowRight, Play, Trash2, Settings } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { Plus, Users, Play, Trash2, Settings, Loader2, ArrowRight } from 'lucide-react'
 import { PageContainer } from '@components/layout/PageContainer'
 import { Button } from '@components/ui/Button'
 import { Card, CardContent } from '@components/ui/Card'
 import { Badge } from '@components/ui/Badge'
 import { Input } from '@components/ui/Input'
 import { Modal } from '@components/ui/Modal'
+import { toast } from '@stores/toastStore'
+import { 
+  getTeams, 
+  createTeam, 
+  deleteTeam, 
+  type Team,
+  type OrchestrationMode 
+} from '@lib/supabase/teams'
 
-interface Team {
-  id: string
-  name: string
-  description?: string
-  mode: 'sequential' | 'parallel' | 'hierarchical' | 'router' | 'ensemble'
-  memberCount: number
-}
-
-const mockTeams: Team[] = []
-
-const modeLabels = {
+const modeLabels: Record<OrchestrationMode, string> = {
   sequential: '串行',
   parallel: '并行',
   hierarchical: '层级',
@@ -29,19 +28,80 @@ const modeLabels = {
   ensemble: '集成',
 }
 
+const modeDescriptions: Record<OrchestrationMode, string> = {
+  sequential: 'Agent 依次执行，上一 Agent 输出作为下一 Agent 输入',
+  parallel: '多个 Agent 同时执行，结果汇总',
+  hierarchical: 'Coordinator 分析任务并分配给 Workers',
+  router: '根据任务类型智能分发到合适的 Agent',
+  ensemble: '所有 Agent 执行同一任务，最后汇总结果',
+}
+
 export function TeamsPage() {
-  const [teams] = useState<Team[]>(mockTeams)
+  const navigate = useNavigate()
+  const [teams, setTeams] = useState<Team[]>([])
+  const [isLoading, setIsLoading] = useState(true)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isCreating, setIsCreating] = useState(false)
   const [newTeam, setNewTeam] = useState({
     name: '',
     description: '',
-    mode: 'sequential' as const,
+    mode: 'sequential' as OrchestrationMode,
   })
 
-  const handleCreateTeam = () => {
-    // TODO: 创建团队
-    setIsModalOpen(false)
-    setNewTeam({ name: '', description: '', mode: 'sequential' })
+  useEffect(() => {
+    loadTeams()
+  }, [])
+
+  const loadTeams = async () => {
+    try {
+      const data = await getTeams()
+      setTeams(data)
+    } catch (error) {
+      console.error('Failed to load teams:', error)
+      toast.error('加载团队失败')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleCreateTeam = async () => {
+    if (!newTeam.name.trim()) {
+      toast.error('请输入团队名称')
+      return
+    }
+
+    setIsCreating(true)
+    try {
+      const team = await createTeam({
+        name: newTeam.name,
+        description: newTeam.description,
+        mode: newTeam.mode,
+      })
+      toast.success('团队创建成功')
+      setIsModalOpen(false)
+      setNewTeam({ name: '', description: '', mode: 'sequential' })
+      // 跳转到团队详情页
+      navigate(`/teams/${team.id}`)
+    } catch (error) {
+      console.error('Failed to create team:', error)
+      toast.error('创建团队失败')
+    } finally {
+      setIsCreating(false)
+    }
+  }
+
+  const handleDeleteTeam = async (teamId: string, e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (!confirm('确定要删除这个团队吗？')) return
+
+    try {
+      await deleteTeam(teamId)
+      toast.success('团队已删除')
+      loadTeams()
+    } catch (error) {
+      console.error('Failed to delete team:', error)
+      toast.error('删除团队失败')
+    }
   }
 
   return (
@@ -55,7 +115,11 @@ export function TeamsPage() {
         </Button>
       }
     >
-      {teams.length === 0 ? (
+      {isLoading ? (
+        <div className="flex items-center justify-center py-12">
+          <Loader2 className="w-6 h-6 animate-spin text-primary-600" />
+        </div>
+      ) : teams.length === 0 ? (
         <Card>
           <CardContent className="py-12 text-center">
             <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -74,31 +138,43 @@ export function TeamsPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {teams.map((team) => (
-            <Card key={team.id}>
+            <Card 
+              key={team.id} 
+              className="cursor-pointer hover:shadow-md transition-shadow"
+              onClick={() => navigate(`/teams/${team.id}`)}
+            >
               <CardContent>
                 <div className="flex items-start justify-between">
-                  <div>
+                  <div className="flex-1">
                     <h3 className="font-medium text-gray-900">{team.name}</h3>
                     {team.description && (
-                      <p className="text-sm text-gray-500 mt-1">{team.description}</p>
+                      <p className="text-sm text-gray-500 mt-1 line-clamp-2">{team.description}</p>
                     )}
                     <div className="flex items-center gap-2 mt-3">
                       <Badge variant="info">{modeLabels[team.mode]}</Badge>
                       <span className="text-sm text-gray-400">
-                        {team.memberCount} 个 Agent
+                        {team.memberCount || 0} 个 Agent
                       </span>
                     </div>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 mt-4">
-                  <Button variant="outline" size="sm">
-                    <Play className="w-4 h-4 mr-1" />
-                    运行
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      navigate(`/teams/${team.id}`)
+                    }}
+                  >
+                    <Settings className="w-4 h-4 mr-1" />
+                    管理
                   </Button>
-                  <Button variant="ghost" size="sm">
-                    <Settings className="w-4 h-4" />
-                  </Button>
-                  <Button variant="ghost" size="sm">
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={(e) => handleDeleteTeam(team.id, e)}
+                  >
                     <Trash2 className="w-4 h-4 text-red-500" />
                   </Button>
                 </div>
@@ -113,26 +189,12 @@ export function TeamsPage() {
         <CardContent>
           <h3 className="font-medium mb-3">编排模式说明</h3>
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4 text-sm">
-            <div>
-              <Badge variant="default" className="mb-1">串行</Badge>
-              <p className="text-gray-500">Agent 依次执行</p>
-            </div>
-            <div>
-              <Badge variant="default" className="mb-1">并行</Badge>
-              <p className="text-gray-500">Agent 同时执行</p>
-            </div>
-            <div>
-              <Badge variant="default" className="mb-1">层级</Badge>
-              <p className="text-gray-500">协调者分配任务</p>
-            </div>
-            <div>
-              <Badge variant="default" className="mb-1">路由</Badge>
-              <p className="text-gray-500">根据任务类型分发</p>
-            </div>
-            <div>
-              <Badge variant="default" className="mb-1">集成</Badge>
-              <p className="text-gray-500">多结果汇总</p>
-            </div>
+            {(Object.keys(modeLabels) as OrchestrationMode[]).map((mode) => (
+              <div key={mode}>
+                <Badge variant="default" className="mb-1">{modeLabels[mode]}</Badge>
+                <p className="text-gray-500">{modeDescriptions[mode]}</p>
+              </div>
+            ))}
           </div>
         </CardContent>
       </Card>
@@ -147,7 +209,16 @@ export function TeamsPage() {
             <Button variant="outline" onClick={() => setIsModalOpen(false)}>
               取消
             </Button>
-            <Button onClick={handleCreateTeam}>创建</Button>
+            <Button onClick={handleCreateTeam} disabled={isCreating}>
+              {isCreating ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  创建中...
+                </>
+              ) : (
+                '创建'
+              )}
+            </Button>
           </>
         }
       >
@@ -169,10 +240,10 @@ export function TeamsPage() {
               编排模式
             </label>
             <div className="grid grid-cols-2 gap-2">
-              {(['sequential', 'parallel', 'hierarchical', 'router', 'ensemble'] as const).map((mode) => (
+              {(Object.keys(modeLabels) as OrchestrationMode[]).map((mode) => (
                 <label
                   key={mode}
-                  className={`flex items-center p-3 border rounded-lg cursor-pointer transition-all ${
+                  className={`flex flex-col p-3 border rounded-lg cursor-pointer transition-all ${
                     newTeam.mode === mode
                       ? 'border-primary-500 bg-primary-50'
                       : 'border-gray-200 hover:border-gray-300'
@@ -183,10 +254,11 @@ export function TeamsPage() {
                     name="mode"
                     value={mode}
                     checked={newTeam.mode === mode}
-                    onChange={(e) => setNewTeam({ ...newTeam, mode: e.target.value as any })}
+                    onChange={(e) => setNewTeam({ ...newTeam, mode: e.target.value as OrchestrationMode })}
                     className="sr-only"
                   />
                   <span className="text-sm font-medium">{modeLabels[mode]}</span>
+                  <span className="text-xs text-gray-500 mt-1">{modeDescriptions[mode]}</span>
                 </label>
               ))}
             </div>
